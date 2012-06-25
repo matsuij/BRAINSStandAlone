@@ -37,7 +37,11 @@ int main(int argc, char *argv[])
   typedef itk::gtractDiffusionTensor3D<TensorComponentType> TensorPixelType;
   typedef itk::Image<TensorPixelType, 3>                    TensorImageType;
   typedef itk::Image<float, 3>                              AnisotropyImageType;
-
+ 
+  // JTM debugging
+  typedef TensorImageType::IndexType TensorIndexType;
+  // JTM debugging
+  
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
@@ -93,38 +97,68 @@ int main(int argc, char *argv[])
 
   typedef itk::ImageRegionConstIterator<TensorImageType> ConstIteratorType;
   ConstIteratorType tensorIt( tensorImage, tensorImage->GetRequestedRegion() );
+    
 
   float anisotropy = 0.0;
   for( anisoIt.GoToBegin(), tensorIt.GoToBegin(); !anisoIt.IsAtEnd(); ++anisoIt, ++tensorIt )
     {
     TensorPixelType tensorPixel = tensorIt.Get();
+  
+    // JTM debugging 
+    TensorIndexType tensorIndex = tensorIt.GetIndex();
+    std::cout << __LINE__ << " tensorIndex: " << tensorIndex[0] << " " << tensorIndex[1] << " " << tensorIndex[2] << std::endl;
+    std::cout << __LINE__ << " tensorPixel " << tensorPixel << std::endl;
+    // JTM debugging
+
     if( anisotropyType == "ADC"  ||  anisotropyType == "adc" )
       {
       anisotropy = static_cast<float>( tensorPixel.GetTrace() / 3.0 );
+      // JTM debugging
+      std::cout << "Trace: " << tensorPixel.GetTrace() << std::endl;
+      std::cout << "ADC: " << anisotropy << std::endl;
+      // JTM debugging
       }
     else if( anisotropyType == "FA"  ||  anisotropyType == "fa" )
       {
       anisotropy = static_cast<float>( tensorPixel.GetFractionalAnisotropy() );
+      // JTM debugging
+      std::cout << "FA: " << anisotropy << std::endl;
+      // JTM debugging
       }
     else if( anisotropyType == "RA"  ||  anisotropyType == "ra" )
       {
+      // JTM debugging
       anisotropy = static_cast<float>( tensorPixel.GetRelativeAnisotropy() );
+      std::cout << "RA: " << anisotropy << std::endl;
+      // JTM debugging
       }
     else if( anisotropyType == "VR"  ||  anisotropyType == "vr" )
       {
+      // JTM debugging
       anisotropy = static_cast<float>( tensorPixel.GetVolumeRatio() );
+      std::cout << "VR: " << anisotropy << std::endl;
+      // JTM debugging
       }
     else if( anisotropyType == "AD"  ||  anisotropyType == "ad" )
       {
+      // JTM debugging
       anisotropy = static_cast<float>( tensorPixel.GetAxialDiffusivity() );
+      std::cout << "AD: " << anisotropy << std::endl;
+      // JTM debugging
       }
     else if( anisotropyType == "RD"  ||  anisotropyType == "RD" )
       {
+      // JTM debugging
       anisotropy = static_cast<float>( tensorPixel.GetRadialDiffusivity() );
+      std::cout << "RD: " << anisotropy << std::endl;
+      // JTM debugging
       }
     else if( anisotropyType == "LI"  ||  anisotropyType == "li" )
       {
+      // JTM debugging
       anisotropy = static_cast<float>( tensorPixel.GetLatticeIndex() );
+      std::cout << "LI: " << anisotropy << std::endl;
+      // JTM debugging
       }
     anisoIt.Set( anisotropy );
     }

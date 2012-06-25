@@ -1,16 +1,19 @@
 
 
-add_executable( gtractCoregBvaluesTests
-    ${GTRACT_SOURCE_DIR}/Cmdline/gtractCoregBvaluesPrimary.cxx gtractCoregBvaluesTests.cxx )
+add_executable( gtractCoregBvaluesTests gtractCoregBvaluesTests.cxx )
 target_link_libraries( gtractCoregBvaluesTests  BRAINSCommonLib GTRACTCommon )
 set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${GTRACT_BINARY_DIR})
 set(GTRACT_CoregBvalues_TESTS ${GTRACT_BINARY_DIR}/gtractCoregBvaluesTests )
 
-add_executable( gtractCoRegAnatomyTests
-    ${GTRACT_SOURCE_DIR}/Cmdline/gtractCoRegAnatomyPrimary.cxx gtractCoRegAnatomyTests.cxx )
+add_executable( gtractCoRegAnatomyTests gtractCoRegAnatomyTests.cxx )
 target_link_libraries( gtractCoRegAnatomyTests  BRAINSCommonLib GTRACTCommon )
 set_target_properties(gtractCoRegAnatomyTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${GTRACT_BINARY_DIR})
 set(GTRACT_CoRegAnatomy_TESTS ${GTRACT_BINARY_DIR}/gtractCoRegAnatomyTests )
+
+add_executable( gtractDiffusionTensor3DTest gtractDiffusionTensor3DTest.cxx )
+target_link_libraries( gtractDiffusionTensor3DTest  BRAINSCommonLib GTRACTCommon )
+set_target_properties(gtractDiffusionTensor3DTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${GTRACT_BINARY_DIR})
+set(GTRACT_CoRegAnatomy_TESTS ${GTRACT_BINARY_DIR}/gtractDiffusionTensor3DTest )
 
 
 set(GTRACT_TEST_OUTPUT_DIR "${GTRACT_BINARY_DIR}/Testing")
@@ -60,3 +63,7 @@ add_test(gtractCoRegAnatomy_Bspline_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRe
      --spatialScale 10
 )
 
+add_test(gtractDiffusionTensor3DTest ${LAUNCH_EXE} $<TARGET_FILE:gtractDiffusionTensor3DTest>
+  gtractDiffusionTensor3DTest
+    DTI_30__1_Sept_2010_Tensor.nhdr
+)
