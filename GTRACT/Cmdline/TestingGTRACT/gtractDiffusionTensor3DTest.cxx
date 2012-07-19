@@ -25,24 +25,31 @@ int main( int argc, char *argv[] )
   typedef itk::gtractDiffusionTensor3D< TensorComponentType> TensorPixelType;
   typedef itk::Image< TensorPixelType, 3 > TensorImageType;
 
-  
+  /*====================================================================
+
+    Test #1: Test scalars with actual tensor file by computing scalars
+    from selected voxel (31, 1, 0) whose scalars were pre-computed in
+    MATLAB
+
+  ====================================================================*/
+
   // Read in tensor image designated as test data
   typedef itk::ImageFileReader< TensorImageType > TensorImageReaderType;
-  TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
-  tensorImageReader->SetFileName( argv[ 1 ] );
+  TensorImageReaderType::Pointer actualTensorImageReader = TensorImageReaderType::New();
+  actualTensorImageReader->SetFileName( argv[ 1 ] );
   
-  TensorImageType::Pointer tensorImage = tensorImageReader->GetOutput();
-  TensorImageType::IndexType tensorIndex;
+  TensorImageType::Pointer actualTensorImage = actualTensorImageReader->GetOutput();
+  TensorImageType::IndexType actualTensorIndex;
 
   typedef itk::ImageRegionConstIterator< TensorImageType > ConstIteratorType;
-  ConstIteratorType tensorIt( tensorImage, tensorImage->GetRequestedRegion() );
+  ConstIteratorType actualTensorIt( actualTensorImage, actualTensorImage->GetRequestedRegion() );
 
-  for( tensorIt.GoToBegin(); !tensorIt.IsAtEnd(); ++tensorIt )
+  for( actualTensorIt.GoToBegin(); !actualTensorIt.IsAtEnd(); ++actualTensorIt )
   {
-    TensorPixelType tensorPixel = tensorIt.Get();
-    tensorIndex = tensorIt.GetIndex();
+    TensorPixelType tensorPixel = actualTensorIt.Get();
+    actualTensorIndex = actualTensorIt.GetIndex();
 
-    if( tensorIndex[ 0 ] == 31 && tensorIndex[ 1 ] == 1 && tensorIndex[ 2 ] == 0 )
+    if( actualTensorIndex[ 0 ] == 31 && actualTensorIndex[ 1 ] == 1 && actualTensorIndex[ 2 ] == 0 )
     {
       // Test trace or ADC
       float testTraceADC = 0.0;
@@ -138,5 +145,47 @@ int main( int argc, char *argv[] )
     }
 
   }
+  
+  /*====================================================================
+
+    Test #2: Test scalars with synthetic tensor file that has values in
+    its diagonal without crossterms.
+
+  ====================================================================*/
+
+  TensorImageType::IndexType start;
+  start.Fill( 0 );
+
+  TensorImageType::SizeType size:
+  size.Fill( 11 );
+
+  TensorImageType::RegionType simpleSyntheticTensorRegion( start, size );
+
+  TensorImageType::Pointer simpleSyntheticTensor = TensorImageType::New();
+  simpleSyntheticTensor->SetRegions( simpleSyntheticTensorRegion );
+  simpleSyntheticTensor->Allocate();
+
+  typedef itk::DiffusionTensor3D< TensorPixelType > DiffusionTensorType;
+  DiffusionTensorType simpleSyntheticTensorValues;
+
+  // Loop over all voxels and give them tensor values
+  ConstIteratorType simpleSyntheticTensorIt( simpleSyntheticTensor, simpleSyntheticTensor->GetRequestedRegion() );
+
+  for( simpleSyntheticTensorIt.GoToBegin(); !simpleSyntheticTensorIt.IsAtEnd(); ++simpleSyntheticTensorIt )
+  {
+    TensorImageType::IndexType simpleSyntheticTensorIndex = simpleSyntheticTensorIt.GetIndex();
+
+    simpleSyntheticTensorValues[ 0 ] = 0.0008;
+    simpleSyntheticTensorValues[ 1 ] = 0.0;
+    simpleSyntheticTensorValues[ 2 ] = 0.0;
+    simpleSyntheticTensorValues[ 3 ] = 0.0007;
+    simpleSyntheticTensorValues[ 4 ] = 0.0;
+    simpleSyntheticTensorValues[ 5 ] = 0.0;
+
+    simpleSyntheticTensor->SetPixel( simpleSyntheticTensorIndex, simpleSyntheticTensorValues );
+  }
+
+
+
 
 }
