@@ -156,7 +156,7 @@ int main( int argc, char *argv[] )
   TensorImageType::IndexType start;
   start.Fill( 0 );
 
-  TensorImageType::SizeType size:
+  TensorImageType::SizeType size;
   size.Fill( 11 );
 
   TensorImageType::RegionType simpleSyntheticTensorRegion( start, size );
@@ -165,27 +165,125 @@ int main( int argc, char *argv[] )
   simpleSyntheticTensor->SetRegions( simpleSyntheticTensorRegion );
   simpleSyntheticTensor->Allocate();
 
-  typedef itk::DiffusionTensor3D< TensorPixelType > DiffusionTensorType;
-  DiffusionTensorType simpleSyntheticTensorValues;
-
+  TensorImageType::IndexType simpleSyntheticTensorIndex;
+    
   // Loop over all voxels and give them tensor values
   ConstIteratorType simpleSyntheticTensorIt( simpleSyntheticTensor, simpleSyntheticTensor->GetRequestedRegion() );
 
   for( simpleSyntheticTensorIt.GoToBegin(); !simpleSyntheticTensorIt.IsAtEnd(); ++simpleSyntheticTensorIt )
   {
-    TensorImageType::IndexType simpleSyntheticTensorIndex = simpleSyntheticTensorIt.GetIndex();
+    simpleSyntheticTensorIndex = simpleSyntheticTensorIt.GetIndex();
+    TensorPixelType simpleSyntheticTensorPixel;
+    simpleSyntheticTensorPixel[ 0 ] = 0.0008;
+    simpleSyntheticTensorPixel[ 1 ] = 0.0;
+    simpleSyntheticTensorPixel[ 2 ] = 0.0;
+    simpleSyntheticTensorPixel[ 3 ] = 0.0007;
+    simpleSyntheticTensorPixel[ 4 ] = 0.0;
+    simpleSyntheticTensorPixel[ 5 ] = 0.0005;
 
-    simpleSyntheticTensorValues[ 0 ] = 0.0008;
-    simpleSyntheticTensorValues[ 1 ] = 0.0;
-    simpleSyntheticTensorValues[ 2 ] = 0.0;
-    simpleSyntheticTensorValues[ 3 ] = 0.0007;
-    simpleSyntheticTensorValues[ 4 ] = 0.0;
-    simpleSyntheticTensorValues[ 5 ] = 0.0;
-
-    simpleSyntheticTensor->SetPixel( simpleSyntheticTensorIndex, simpleSyntheticTensorValues );
+    simpleSyntheticTensor->SetPixel( simpleSyntheticTensorIndex, simpleSyntheticTensorPixel );
   }
 
+  for( simpleSyntheticTensorIt.GoToBegin(); !simpleSyntheticTensorIt.IsAtEnd(); ++simpleSyntheticTensorIt )
+  {
+    simpleSyntheticTensorIndex = simpleSyntheticTensorIt.GetIndex();
+    TensorPixelType simpleSyntheticTensorPixel;
 
+    if( simpleSyntheticTensorIndex[ 0 ] == 5 && simpleSyntheticTensorIndex[ 1 ] == 5 && simpleSyntheticTensorIndex[ 2 ] == 0 )
+    {
+      // Test trace and ADC
+      float testTraceADC = 0.0;
+      testTraceADC = static_cast< float >( simpleSyntheticTensorPixel.GetTrace() / 3.0 );
+      std::cout << "testTraceADC: " << testTraceADC << std::endl;
+      if( simpleSyntheticTensorPixel.GetTrace() != 0.001900000 && testTraceADC != 0.000633333 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
 
+      // Test FA
+      float testFA = 0.0;
+      testFA = static_cast< float >( simpleSyntheticPixel.GetFractionalAnisotropy() );
+      std::cout << "testFA: " << testFA << std::endl;
+      if( testFA != 0.725469 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
+
+      // Test RA
+      float testRA = 0.0;
+      testRA = static_cast< float >( simpleSyntheticPixel.GetRelativeAnisotropy() );
+      std::cout << "testFA: " << testRA << std::endl;
+      if( testFA != 0.0201814 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
+
+      // Test VR
+      float testVR = 0.0;
+      testVR = static_cast< float >( simpleSyntheticPixel.GetVolumeRatio() );
+      std::cout << "testVR: " << testVR << std::endl;
+      if( testVR != 0.783673 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
+
+      // Test AD
+      float testAD = 0.0;
+      testAD = static_cast< float >( simpleSyntheticPixel.GetAxialDiffusivity() );
+      std::cout << "testAD: " << testAD << std::endl;
+      if( testAD != 0.000833842 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
+
+      // Test RD
+      float testRD = 0.0;
+      testRD = static_cast< float >( simpleSyntheticPixel.GetRadialDiffusivity() );
+      std::cout << "testRD: " << testRD << std::endl;
+      if( testRD != 0.000235635 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
+      
+      // Test LI
+      float testLI = 0.0;
+      testLI = static_cast< float >( simpleSyntheticPixel.GetLatticeIndex() );
+      std::cout << "testLI: " << testLI << std::endl;
+      if( testLI != 0.625887 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
+    
+    }
+  
+  }
 
 }
