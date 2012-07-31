@@ -1,0 +1,16 @@
+NRRD0004
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: double
+dimension: 4
+space: left-posterior-superior
+sizes: 6 128 128 70
+space directions: none (2,0,0) (0,2,0) (0,0,2)
+centerings: ??? cell cell cell
+kinds: 3D-symmetric-matrix space space space
+endian: little
+encoding: gzip
+space origin: (-128,-128,-70)
+data file: DTI_30__1_Sept_2010_Tensor.raw.gz
+DWMRI_b-value:=1000
+modality:=DWMRI
